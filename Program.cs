@@ -13,6 +13,7 @@ int choice = -1;
 
 while (choice != 0)
 {
+    Console.WriteLine("------------------------------------------------------");
     Console.WriteLine("Please choose one of the following options:");
     Console.WriteLine("0. Exit");
     Console.WriteLine("1. Display app-only access token");
@@ -21,8 +22,11 @@ while (choice != 0)
     Console.WriteLine("4. Create New Team (app-only)");
     Console.WriteLine("5. List groups w/o Team (app-only)");
     Console.WriteLine("6. Teamify group (app-only)");
-    Console.WriteLine("7. List sites w/o group (app-only)");
-    Console.WriteLine("8. Teamify site (app-only)");
+    Console.WriteLine("7. List all Teams (app-only)");
+    Console.WriteLine("8. List sites (app-only) - TBF");
+    Console.WriteLine("9. Teamify site (app-only) - TBF");
+    Console.WriteLine("10. Create 500 Teams (app-only)");
+    Console.WriteLine("------------------------------------------------------");
     try
     {
         choice = int.Parse(Console.ReadLine() ?? string.Empty);
@@ -61,11 +65,23 @@ while (choice != 0)
         case 6:
             // Run any Graph code
             await TeamifyGroupAsync();
-            break;            
+            break;    
         case 7:
             // Run any Graph code
+            await ListAllTeamsAsync();
+            break;
+        case 8:
+            // Run any Graph code
             await ListNonGroupSitesAsync();
-            break;              
+            break;
+        case 9:
+            // Run any Graph code
+            await ListNonGroupSitesAsync();
+            break;
+        case 10:
+            // Run any Graph code
+            await CreateNewTeamBulkAsync();
+            break;                                      
         default:
             Console.WriteLine("Invalid choice! Please try again.");
             break;
@@ -166,16 +182,6 @@ async Task DisplayAppOnlyAccessTokenAsync()
     }
 }
 
-async Task ListInboxAsync()
-{
-    // TODO
-}
-
-async Task SendMailAsync()
-{
-    // TODO
-}
-
 async Task ListUsersAsync()
 {
     try
@@ -216,13 +222,56 @@ async Task CreateNewTeamAsync()
         Console.WriteLine($"Error creating team: {ex.Message}");
     }
 }
+async Task CreateNewTeamBulkAsync()
+{
+    try
+    {
+        //measure execution time
+        var watch = System.Diagnostics.Stopwatch.StartNew();
 
+        await GraphHelper.CreateNewTeamBulkAsync();
+
+        watch.Stop();
+        Console.WriteLine($"Execution time: {watch.ElapsedMilliseconds} ms");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error creating team: {ex.Message}");
+    }
+}
 async Task ListGroupsWithoutTeamsAsync()
 {
     try
     {
         var groups = await GraphHelper.ListGroupsWithoutTeamsAsync();
         Console.WriteLine($"Total groups without teams: "+ groups.Count);
+        
+            
+        foreach (var group in groups.CurrentPage)
+        {
+            Console.WriteLine($"Name: {group.DisplayName ?? "NO NAME"}, ID: {group.Id}");
+        }
+
+        // If NextPageRequest is not null, there are more users
+        // available on the server
+        // Access the next page like:
+        // userPage.NextPageRequest.GetAsync();
+        var moreAvailable = groups.NextPageRequest != null;
+
+        Console.WriteLine($"\nMore groups available? {moreAvailable}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error getting groups: {ex.Message}");
+    }
+}
+
+async Task ListAllTeamsAsync()
+{
+    try
+    {
+        var groups = await GraphHelper.ListAllTeamsAsync();
+        Console.WriteLine($"Total teams: "+ groups.Count);
         
             
         foreach (var group in groups.CurrentPage)

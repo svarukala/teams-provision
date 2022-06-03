@@ -176,6 +176,43 @@ class GraphHelper
         return team.DisplayName;
     }
 
+    public async static Task CreateNewTeamBulkAsync()
+    {
+        EnsureGraphForAppOnlyAuth();
+        //EnsureGraphForAppOnlyAuth(new[] { "https://graph.microsoft.com/Team.Create" });
+
+        // Ensure client isn't null
+        _ = _appClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
+        for (int i = 0; i < 500; i++)
+        {
+            var team = new Team
+            {
+                DisplayName = i + " -AutoGen-" + System.IO.Path.GetRandomFileName(),
+                Description = "My Sample Team’s Description",
+                Members = new TeamMembersCollectionPage()
+            {
+                new AadUserConversationMember
+                {
+                    Roles = new List<String>()
+                    {
+                        "owner"
+                    },
+                    AdditionalData = new Dictionary<string, object>()
+                    {
+                        {"user@odata.bind", "https://graph.microsoft.com/v1.0/users('19e76345-163a-4668-967f-5cbe4ca9f1b9')"}
+                    }
+                }
+            },
+                AdditionalData = new Dictionary<string, object>()
+            {
+                {"template@odata.bind", "https://graph.microsoft.com/v1.0/teamsTemplates('standard')"}
+            }
+            };
+            await _appClient.Teams.Request().AddAsync(team);
+            Console.WriteLine("Team index: " + i);
+        }
+    }
     public async static Task<IGraphServiceGroupsCollectionPage> ListGroupsWithoutTeamsAsync()
     {
         EnsureGraphForAppOnlyAuth();
@@ -230,7 +267,7 @@ class GraphHelper
         var result = await _appClient.Groups[groupId].Team
             .Request()
             .PutAsync(team);
-        return "Teamified group successfully: "+ result.WebUrl;
+        return "Teamified group successfully: " + result.WebUrl;
         /*
         //Alternate way to teamify a group
         var team = new Team
@@ -246,6 +283,29 @@ class GraphHelper
             .Request()
             .AddAsync(team);
         */
+    }
+
+    public async static Task<IGraphServiceGroupsCollectionPage> ListAllTeamsAsync()
+    {
+        EnsureGraphForAppOnlyAuth();
+        //EnsureGraphForAppOnlyAuth(new[] { "https://graph.microsoft.com/Group.Read.All" });
+
+        // Ensure client isn't null
+        _ = _appClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
+
+        var queryOptions = new List<QueryOption>()
+        {
+            new QueryOption("$count", "true")
+        };
+        var groups = await _appClient.Groups
+        .Request(queryOptions)
+        .Header("ConsistencyLevel", "eventual")
+        .Filter("resourceProvisioningOptions/any(x:x eq 'Team')")
+        .Select("id, displayName") //, resourceProvisioningOptions")
+        .GetAsync();
+
+        return groups;
     }
 
     public static Task<IGraphServiceSitesCollectionPage> ListNonGroupSitesAsync()
