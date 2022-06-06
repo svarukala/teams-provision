@@ -144,6 +144,10 @@ class GraphHelper
         EnsureGraphForAppOnlyAuth();
         //EnsureGraphForAppOnlyAuth(new[] { "https://graph.microsoft.com/Team.Create" });
 
+        // Ensure settings isn't null
+        _ = _settings ??
+            throw new System.NullReferenceException("Settings cannot be null");
+
         // Ensure client isn't null
         _ = _appClient ??
             throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
@@ -162,7 +166,8 @@ class GraphHelper
                     },
                     AdditionalData = new Dictionary<string, object>()
                     {
-                        {"user@odata.bind", "https://graph.microsoft.com/v1.0/users('4cb08dcb-b50e-4ee6-9712-03fd4c746a6c')"}
+                        {"user@odata.bind", "https://graph.microsoft.com/v1.0/users('"+ _settings.TeamOwnerUserId  +"')"}
+                        //{"user@odata.bind", "https://graph.microsoft.com/v1.0/users('4cb08dcb-b50e-4ee6-9712-03fd4c746a6c')"}
                     }
                 }
             },
@@ -181,12 +186,14 @@ class GraphHelper
         EnsureGraphForAppOnlyAuth();
         //EnsureGraphForAppOnlyAuth(new[] { "https://graph.microsoft.com/Team.Create" });
 
+        // Ensure settings isn't null
+        _ = _settings ??
+            throw new System.NullReferenceException("Settings cannot be null");
+
         // Ensure client isn't null
         _ = _appClient ??
             throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
         for (int i = 0; i < 1000; i++)
-
-        
         {
             var team = new Team
             {
@@ -202,7 +209,8 @@ class GraphHelper
                     },
                     AdditionalData = new Dictionary<string, object>()
                     {
-                        {"user@odata.bind", "https://graph.microsoft.com/v1.0/users('19e76345-163a-4668-967f-5cbe4ca9f1b9')"}
+                        {"user@odata.bind", "https://graph.microsoft.com/v1.0/users('"+ _settings.TeamOwnerUserId  +"')"}
+                        //{"user@odata.bind", "https://graph.microsoft.com/v1.0/users('19e76345-163a-4668-967f-5cbe4ca9f1b9')"}
                     }
                 }
             },
