@@ -184,7 +184,9 @@ class GraphHelper
         // Ensure client isn't null
         _ = _appClient ??
             throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < 1000; i++)
+
+        
         {
             var team = new Team
             {
