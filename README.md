@@ -11,6 +11,8 @@ This sample code uses .NET 6 and Microsoft Graph SDK. It uses app-only auth (cli
 9. Teamify site (app-only) - TBF
 10. Create 1000 Teams (app-only)
 
+Note: Option 8 and 9 are yet to be finished
+
 # Register Azure AD App
 1. Use the sample here https://docs.microsoft.com/en-us/graph/tutorials/dotnet?tabs=aad to create Azure AD App registration for a C# Console Application
 
