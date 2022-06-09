@@ -14,9 +14,9 @@ This sample code uses .NET 6 and Microsoft Graph SDK. It uses app-only auth (cli
 # Register Azure AD App
 1. Use the sample here https://docs.microsoft.com/en-us/graph/tutorials/dotnet?tabs=aad to create Azure AD App registration for a C# Console Application
 
-# Minimal Steps
+# Minimal Steps to Awesome
 1. Rename the appsettings.sample.json to appsettings.json. 
-2. Replace the placeholder with your Azure AD App's app id, client secret, tenant id. For the teamOwnerUserId, provide the user id (guid) of the user who will be added as the team owner. You can get user id by navigating to https://graph.microsoft.com/v1.0/me/ in MS Graph Explorer (https://aka.ms/ge).
+2. Replace the placeholders with your Azure AD App's app id, client secret, tenant id. For the teamOwnerUserId, provide the user id (guid) of the user who will be added as the team owner. You can get user id by navigating to https://graph.microsoft.com/v1.0/me/ in MS Graph Explorer (https://aka.ms/ge).
 
 ```json
 {
